@@ -1,13 +1,15 @@
 :root {
-  --bg: #f4f1ea;
-  --surface: #ffffff;
-  --ink: #23272f;
-  --muted: #6b7280;
-  --accent-x: #e0533d;
-  --accent-o: #3d6de0;
-  --accent-win: #ffd166;
-  --border: #d9d4c8;
-  color-scheme: light;
+  /* neon gamer palette */
+  --bg: #07051a;
+  --surface: rgba(18, 12, 48, 0.72);
+  --ink: #eef3ff;
+  --muted: #8b90b8;
+  --pink: #ff2e97;
+  --blue: #29d3ff;
+  --border: rgba(41, 211, 255, 0.28);
+  --glow-pink: 0 0 8px rgba(255, 46, 151, 0.8), 0 0 22px rgba(255, 46, 151, 0.45);
+  --glow-blue: 0 0 8px rgba(41, 211, 255, 0.8), 0 0 22px rgba(41, 211, 255, 0.45);
+  color-scheme: dark;
 }
 
 * {
@@ -21,9 +23,15 @@ body {
 }
 
 body {
-  background: var(--bg);
+  /* dark base with soft pink + blue light spilling in from the corners */
+  background:
+    radial-gradient(circle at 10% 0%, rgba(255, 46, 151, 0.18), transparent 45%),
+    radial-gradient(circle at 90% 100%, rgba(41, 211, 255, 0.18), transparent 45%),
+    var(--bg);
+  background-attachment: fixed;
   color: var(--ink);
-  font-family: "Segoe UI", system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
+  font-family: "Rajdhani", "Segoe UI", system-ui, sans-serif;
+  font-weight: 500;
   min-height: 100vh;
 }
 

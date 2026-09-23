@@ -3,6 +3,7 @@ import Board from "./components/Board";
 import StatusBar from "./components/StatusBar";
 import Scoreboard from "./components/Scoreboard";
 import MoveHistory from "./components/MoveHistory";
+import NetworkBackground from "./components/NetworkBackground";
 import { gameReducer, initialGameState, getGameStatus } from "./gameReducer";
 import "./App.css";
 
@@ -16,9 +17,11 @@ export default function App() {
 
   return (
     <div className="app">
+      <NetworkBackground />
+
       <header className="app__header">
         <h1>Tic-Tac-Toe</h1>
-        <p className="app__subtitle">built during my (unpaid) internship at React HQ</p>
+        <p className="app__subtitle">Neon Arena · Player vs Player</p>
       </header>
 
       <Scoreboard scores={scores} onResetScores={() => dispatch({ type: "RESET_SCORES" })} />
@@ -41,12 +44,6 @@ export default function App() {
         currentMove={currentMove}
         onJumpTo={(move) => dispatch({ type: "JUMP_TO", move })}
       />
-
-      <footer className="app__footer">
-        <p>
-          made with React + useReducer, no spaghetti was harmed in the making of this app
-        </p>
-      </footer>
     </div>
   );
 }
