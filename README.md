@@ -6,7 +6,7 @@ history you can jump back through, a scoreboard, and player names.
 
 Built as my "first day as a JR Frontend Intern at React HQ" assignment.
 
-- **Live app:** _coming soon (Vercel link goes here)_
+- **Live app:** https://tic-tac-toe-five-ebon-96.vercel.app/
 - **Loom walkthrough:** _coming soon_
 - **Repo:** https://github.com/Qhawekazii/tic-tac-toe
 
