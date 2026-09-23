@@ -46,9 +46,6 @@ Every move is saved. Click any entry in **Move history** to jump back and see
 the board as it was then. If you play a new move from that point, the game
 continues from there and the old "future" moves are dropped.
 
-### Undo move (manual feature, built without AI)
-_TODO: describe how Undo works once it's built._
-
 ### Look & feel
 - Neon pink and sky-blue theme on a dark background, with an animated
   "network" of connected dots behind the game.
