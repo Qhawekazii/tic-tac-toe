@@ -7,6 +7,138 @@
   pointer-events: none; /* clicks go straight through to the game */
 }
 
+/* --- loading screen --- */
+
+.loader {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+/* the ring of dots: the whole ring slowly spins... */
+.loader__spinner {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  animation: spin 2.4s linear infinite;
+}
+
+/* ...and each dot pulses one after another, like a wave going round */
+.loader__dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  margin: -7px 0 0 -7px; /* centre the dot on its position */
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: var(--glow-pink);
+  /* --i is 0..7 (set in LoadingScreen.jsx): 8 dots × 45° = a full circle */
+  transform: rotate(calc(var(--i) * 45deg)) translateY(-38px);
+  animation: dot-pulse 1s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.125s);
+}
+
+/* every other dot is blue */
+.loader__dot:nth-child(even) {
+  background: var(--blue);
+  box-shadow: var(--glow-blue);
+}
+
+.loader__text {
+  margin: 0;
+  font-family: "Orbitron", sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--blue);
+  text-shadow: var(--glow-blue);
+}
+
+/* the "..." after "Loading arena" — each dot hops in turn */
+.loader__ellipsis span {
+  display: inline-block;
+  animation: dot-hop 1.2s ease-in-out infinite;
+}
+
+.loader__ellipsis span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loader__ellipsis span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+.loader__bar {
+  width: min(240px, 70vw);
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+/* fills from empty to full in 3s — same as LOADING_MS in App.jsx */
+.loader__bar-fill {
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--pink), var(--blue));
+  box-shadow: var(--glow-pink);
+  animation: fill-bar 3s ease-in-out forwards;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes dot-pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+    scale: 0.6;
+  }
+  50% {
+    opacity: 1;
+    scale: 1.2;
+  }
+}
+
+@keyframes dot-hop {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes fill-bar {
+  to {
+    width: 100%;
+  }
+}
+
+/* when loading finishes, the game fades + slides in */
+@keyframes game-enter {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* --- layout --- */
 
 .app {
@@ -18,6 +150,7 @@
   align-items: center;
   gap: 18px;
   text-align: center;
+  animation: game-enter 0.6s ease-out;
 }
 
 .app__header h1 {
@@ -504,7 +637,10 @@
   .mark,
   .square--winning .mark,
   .board--won,
-  .app__header h1 {
+  .app__header h1,
+  .app,
+  .loader__spinner,
+  .loader__ellipsis span {
     animation: none;
   }
 }

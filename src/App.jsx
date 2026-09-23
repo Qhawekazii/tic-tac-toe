@@ -1,18 +1,30 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useState } from "react";
 import Board from "./components/Board";
 import StatusBar from "./components/StatusBar";
 import Scoreboard from "./components/Scoreboard";
 import MoveHistory from "./components/MoveHistory";
 import ModeSelect from "./components/ModeSelect";
 import NetworkBackground from "./components/NetworkBackground";
+import LoadingScreen from "./components/LoadingScreen";
 import { gameReducer, initialGameState, getGameStatus } from "./gameReducer";
 import { getCpuMove } from "./cpu";
 import "./App.css";
 
 const CPU_DELAY_MS = 600; // small pause so the CPU feels like it's "thinking"
+const LOADING_MS = 3000; // how long the loading screen shows (keep in sync with .loader__bar-fill in App.css)
 
 export default function App() {
   const [state, dispatch] = useReducer(gameReducer, initialGameState);
+
+  // show the loading screen when the app first opens.
+  // this is just a UI thing (not game state), so a simple useState is enough
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), LOADING_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
   const { history, currentMove, scores, mode, difficulty } = state;
 
   const currentSquares = history[currentMove];
@@ -41,51 +53,65 @@ export default function App() {
     dispatch({ type: "PLAY", squareIndex: i });
   }
 
+  // while loading, show only the background + the loading screen.
+  // NetworkBackground is in the same spot in both returns, so React keeps
+  // the same one running and the dots don't jump when loading finishes
+  if (isLoading) {
+    return (
+      <>
+        <NetworkBackground />
+        <LoadingScreen />
+      </>
+    );
+  }
+
   return (
-    <div className="app">
+    <>
       <NetworkBackground />
 
-      <header className="app__header">
-        <h1>Tic-Tac-Toe</h1>
-        <p className="app__subtitle">
-          {mode === "cpu" ? "Neon Arena · Player vs CPU" : "Neon Arena · Player vs Player"}
-        </p>
-      </header>
+      <div className="app">
+        <header className="app__header">
+          <h1>Tic-Tac-Toe</h1>
+          <p className="app__subtitle">
+            {mode === "cpu" ? "Neon Arena · Player vs CPU" : "Neon Arena · Player vs Player"}
+          </p>
+        </header>
 
-      <ModeSelect
-        mode={mode}
-        difficulty={difficulty}
-        onModeChange={(newMode) => dispatch({ type: "SET_MODE", mode: newMode })}
-        onDifficultyChange={(level) => dispatch({ type: "SET_DIFFICULTY", difficulty: level })}
-      />
+        <ModeSelect
+          mode={mode}
+          difficulty={difficulty}
+          onModeChange={(newMode) => dispatch({ type: "SET_MODE", mode: newMode })}
+          onDifficultyChange={(level) => dispatch({ type: "SET_DIFFICULTY", difficulty: level })}
+        />
 
-      <Scoreboard scores={scores} onResetScores={() => dispatch({ type: "RESET_SCORES" })} />
+        <Scoreboard scores={scores} onResetScores={() => dispatch({ type: "RESET_SCORES" })} />
 
-      <StatusBar
-        winner={winner}
-        isDraw={isDraw}
-        currentPlayer={currentPlayer}
-        isCpuThinking={isCpuTurn}
-      />
+        <StatusBar
+          winner={winner}
+          isDraw={isDraw}
+          currentPlayer={currentPlayer}
+          isCpuThinking={isCpuTurn}
+        />
 
-      <Board
-        squares={currentSquares}
-        winningLine={winningLine}
-        locked={isGameOver || isCpuTurn}
-        currentPlayer={currentPlayer}
-        hasWinner={!!winner}
-        onSquareClick={handleSquareClick}
-      />
+        <Board
+          squares={currentSquares}
+          winningLine={winningLine}
+          locked={isGameOver || isCpuTurn}
+          currentPlayer={currentPlayer}
+          hasWinner={!!winner}
+          onSquareClick={handleSquareClick}
+        />
 
-      <button className="restart-button" onClick={() => dispatch({ type: "RESTART" })}>
-        Restart
-      </button>
+        <button className="restart-button" onClick={() => dispatch({ type: "RESTART" })}>
+          Restart
+        </button>
 
-      <MoveHistory
-        history={history}
-        currentMove={currentMove}
-        onJumpTo={(move) => dispatch({ type: "JUMP_TO", move })}
-      />
-    </div>
+        <MoveHistory
+          history={history}
+          currentMove={currentMove}
+          onJumpTo={(move) => dispatch({ type: "JUMP_TO", move })}
+        />
+      </div>
+    </>
   );
 }
