@@ -30,14 +30,18 @@ export function getGameStatus(squares) {
 }
 
 const emptyBoard = Array(9).fill(null);
+const emptyScores = { X: 0, O: 0, draws: 0 };
 
 export const initialGameState = {
   // history[0] is the empty board, history[n] is the board after move n
   history: [emptyBoard],
   currentMove: 0,
-  scores: { X: 0, O: 0, draws: 0 },
+  scores: emptyScores,
   mode: "pvp", // "pvp" = two people on one device, "cpu" = you (X) vs the computer (O)
   difficulty: "easy", // only used in "cpu" mode: "easy" or "hard"
+  // 2-player names, e.g. { X: "Emily", O: "Sam" }. null = not entered yet,
+  // which makes the app show the "enter player names" screen
+  playerNames: null,
 };
 
 export function gameReducer(state, action) {
@@ -90,8 +94,22 @@ export function gameReducer(state, action) {
       // changing difficulty also starts a fresh board, so it's a fair game
       return { ...state, difficulty: action.difficulty, history: [emptyBoard], currentMove: 0 };
 
+    case "SET_PLAYER_NAMES":
+      // new players → fresh board and fresh scores
+      return {
+        ...state,
+        playerNames: action.names,
+        history: [emptyBoard],
+        currentMove: 0,
+        scores: emptyScores,
+      };
+
+    case "CHANGE_PLAYER_NAMES":
+      // clearing the names sends you back to the "enter player names" screen
+      return { ...state, playerNames: null };
+
     case "RESET_SCORES":
-      return { ...state, scores: { X: 0, O: 0, draws: 0 } };
+      return { ...state, scores: emptyScores };
 
     default:
       return state;

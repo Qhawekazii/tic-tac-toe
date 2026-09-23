@@ -204,6 +204,10 @@
 }
 
 .scoreboard__label {
+  max-width: 90px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; /* long names end in "…" instead of breaking the layout */
   font-family: "Orbitron", sans-serif;
   font-size: 0.7rem;
   text-transform: uppercase;
@@ -489,6 +493,86 @@
   92% {
     opacity: 0.45;
   }
+}
+
+/* --- player names screen --- */
+
+.name-setup {
+  width: min(360px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 24px 20px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(6px);
+  box-shadow: 0 0 24px rgba(255, 46, 151, 0.2), 0 0 24px rgba(41, 211, 255, 0.15);
+  animation: game-enter 0.4s ease-out;
+}
+
+.name-setup__title {
+  margin: 0 0 4px;
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.05rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.name-setup__field {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.name-setup__mark {
+  width: 44px;
+  flex-shrink: 0;
+  font-family: "Orbitron", sans-serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+
+.name-setup__mark--x {
+  color: var(--pink);
+  text-shadow: var(--glow-pink);
+}
+
+.name-setup__mark--o {
+  color: var(--blue);
+  text-shadow: var(--glow-blue);
+}
+
+.name-setup__input {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 14px;
+  font-family: inherit;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--ink);
+  background: rgba(7, 5, 26, 0.7);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.name-setup__input::placeholder {
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.name-setup__input:focus {
+  border-color: var(--blue);
+  box-shadow: var(--glow-blue);
+}
+
+.name-setup .restart-button {
+  margin-top: 6px;
 }
 
 /* --- mode select --- */

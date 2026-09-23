@@ -6,6 +6,7 @@ import MoveHistory from "./components/MoveHistory";
 import ModeSelect from "./components/ModeSelect";
 import NetworkBackground from "./components/NetworkBackground";
 import LoadingScreen from "./components/LoadingScreen";
+import NameSetup from "./components/NameSetup";
 import { gameReducer, initialGameState, getGameStatus } from "./gameReducer";
 import { getCpuMove } from "./cpu";
 import "./App.css";
@@ -25,11 +26,22 @@ export default function App() {
     return () => clearTimeout(timer);
   }, []);
 
-  const { history, currentMove, scores, mode, difficulty } = state;
+  const { history, currentMove, scores, mode, difficulty, playerNames } = state;
 
   const currentSquares = history[currentMove];
   const { winner, winningLine, isDraw, isGameOver } = getGameStatus(currentSquares);
   const currentPlayer = currentMove % 2 === 0 ? "X" : "O";
+
+  // the names shown on screen instead of plain "X" and "O"
+  let names;
+  if (mode === "cpu") {
+    names = { X: "You", O: "CPU" };
+  } else {
+    names = playerNames || { X: "X", O: "O" };
+  }
+
+  // in 2-player mode, ask for names first (until they've been entered)
+  const needsNames = mode === "pvp" && playerNames === null;
 
   // in CPU mode the computer is always O
   const isCpuTurn = mode === "cpu" && currentPlayer === "O" && !isGameOver;
@@ -73,7 +85,7 @@ export default function App() {
         <header className="app__header">
           <h1>Tic-Tac-Toe</h1>
           <p className="app__subtitle">
-            {mode === "cpu" ? "Neon Arena · Player vs CPU" : "Neon Arena · Player vs Player"}
+            {needsNames ? "Neon Arena" : `Neon Arena · ${names.X} vs ${names.O}`}
           </p>
         </header>
 
@@ -84,33 +96,50 @@ export default function App() {
           onDifficultyChange={(level) => dispatch({ type: "SET_DIFFICULTY", difficulty: level })}
         />
 
-        <Scoreboard scores={scores} onResetScores={() => dispatch({ type: "RESET_SCORES" })} />
+        {needsNames ? (
+          <NameSetup onStart={(newNames) => dispatch({ type: "SET_PLAYER_NAMES", names: newNames })} />
+        ) : (
+          <>
+            <Scoreboard
+              scores={scores}
+              names={names}
+              onResetScores={() => dispatch({ type: "RESET_SCORES" })}
+            />
 
-        <StatusBar
-          winner={winner}
-          isDraw={isDraw}
-          currentPlayer={currentPlayer}
-          isCpuThinking={isCpuTurn}
-        />
+            <StatusBar
+              winner={winner}
+              isDraw={isDraw}
+              currentPlayer={currentPlayer}
+              isCpuThinking={isCpuTurn}
+              names={names}
+            />
 
-        <Board
-          squares={currentSquares}
-          winningLine={winningLine}
-          locked={isGameOver || isCpuTurn}
-          currentPlayer={currentPlayer}
-          hasWinner={!!winner}
-          onSquareClick={handleSquareClick}
-        />
+            <Board
+              squares={currentSquares}
+              winningLine={winningLine}
+              locked={isGameOver || isCpuTurn}
+              currentPlayer={currentPlayer}
+              hasWinner={!!winner}
+              onSquareClick={handleSquareClick}
+            />
 
-        <button className="restart-button" onClick={() => dispatch({ type: "RESTART" })}>
-          Restart
-        </button>
+            <button className="restart-button" onClick={() => dispatch({ type: "RESTART" })}>
+              Restart
+            </button>
 
-        <MoveHistory
-          history={history}
-          currentMove={currentMove}
-          onJumpTo={(move) => dispatch({ type: "JUMP_TO", move })}
-        />
+            {mode === "pvp" && (
+              <button className="link-button" onClick={() => dispatch({ type: "CHANGE_PLAYER_NAMES" })}>
+                change player names
+              </button>
+            )}
+
+            <MoveHistory
+              history={history}
+              currentMove={currentMove}
+              onJumpTo={(move) => dispatch({ type: "JUMP_TO", move })}
+            />
+          </>
+        )}
       </div>
     </>
   );
