@@ -36,6 +36,8 @@ export const initialGameState = {
   history: [emptyBoard],
   currentMove: 0,
   scores: { X: 0, O: 0, draws: 0 },
+  mode: "pvp", // "pvp" = two people on one device, "cpu" = you (X) vs the computer (O)
+  difficulty: "easy", // only used in "cpu" mode: "easy" or "hard"
 };
 
 export function gameReducer(state, action) {
@@ -79,6 +81,14 @@ export function gameReducer(state, action) {
     case "RESTART":
       // scores stick around across restarts, only the board resets
       return { ...state, history: [emptyBoard], currentMove: 0 };
+
+    case "SET_MODE":
+      // switching between 2 players and vs CPU starts a fresh board
+      return { ...state, mode: action.mode, history: [emptyBoard], currentMove: 0 };
+
+    case "SET_DIFFICULTY":
+      // changing difficulty also starts a fresh board, so it's a fair game
+      return { ...state, difficulty: action.difficulty, history: [emptyBoard], currentMove: 0 };
 
     case "RESET_SCORES":
       return { ...state, scores: { X: 0, O: 0, draws: 0 } };

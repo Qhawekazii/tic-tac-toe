@@ -1,8 +1,9 @@
 import Square from "./Square";
 
-export default function Board({ squares, onSquareClick, winningLine, gameOver }) {
+// "locked" means nobody can click right now (game over, or the CPU is thinking)
+export default function Board({ squares, onSquareClick, winningLine, locked }) {
   return (
-    <div className={`board${gameOver ? " board--over" : ""}`}>
+    <div className={locked ? "board board--locked" : "board"}>
       {squares.map((value, i) => (
         <Square
           key={i}
