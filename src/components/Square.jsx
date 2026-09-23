@@ -7,7 +7,9 @@ export default function Square({ value, onClick, isWinning }) {
 
   return (
     <button className={className} onClick={onClick} disabled={!!value}>
-      {value}
+      {/* the X/O sits in its own <span> so it can be animated
+          (pop in when placed, then float) without moving the square */}
+      {value && <span className="mark">{value}</span>}
     </button>
   );
 }

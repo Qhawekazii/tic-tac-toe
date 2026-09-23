@@ -72,6 +72,8 @@ export default function App() {
         squares={currentSquares}
         winningLine={winningLine}
         locked={isGameOver || isCpuTurn}
+        currentPlayer={currentPlayer}
+        hasWinner={!!winner}
         onSquareClick={handleSquareClick}
       />
 

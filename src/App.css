@@ -33,6 +33,7 @@
   background-clip: text;
   color: transparent;
   filter: drop-shadow(0 0 10px rgba(255, 46, 151, 0.55));
+  animation: neon-flicker 5s linear infinite;
 }
 
 .app__subtitle {
@@ -170,6 +171,10 @@
   min-height: 0;
   padding: 0;
   line-height: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: "Orbitron", sans-serif;
   font-size: clamp(2rem, 10vw, 3rem);
   font-weight: 800;
@@ -220,6 +225,137 @@
   border-color: var(--pink);
   box-shadow: var(--glow-pink), inset 0 0 16px rgba(255, 46, 151, 0.4);
   animation: pulse 1.2s ease-in-out infinite;
+}
+
+/* --- game feel: animations --- */
+
+/* the X or O inside a square */
+.mark {
+  display: inline-block;
+  /* 1st animation: pop in when placed. 2nd: float forever after that */
+  animation: pop-in 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), float-x 3s ease-in-out 0.45s infinite;
+}
+
+.square--o .mark {
+  animation-name: pop-in, float-o;
+}
+
+/* start the floating at different times so the marks don't move in sync */
+.square:nth-child(3n + 2) .mark {
+  animation-delay: 0s, 1s;
+}
+
+.square:nth-child(3n) .mark {
+  animation-delay: 0s, 1.6s;
+}
+
+/* winning marks jump up and down */
+.square--winning .mark {
+  animation: win-bounce 0.45s ease-in-out infinite alternate;
+}
+
+/* the whole board shakes once when someone wins */
+.board--won {
+  animation: shake 0.5s ease-in-out;
+}
+
+/* hover preview: a faint X or O shows where you're about to play */
+.board--turn-x:not(.board--locked) .square:not(:disabled):hover::after,
+.board--turn-o:not(.board--locked) .square:not(:disabled):hover::after {
+  position: absolute;
+  opacity: 0.3;
+}
+
+.board--turn-x:not(.board--locked) .square:not(:disabled):hover::after {
+  content: "X";
+  color: var(--pink);
+}
+
+.board--turn-o:not(.board--locked) .square:not(:disabled):hover::after {
+  content: "O";
+  color: var(--blue);
+}
+
+/* squares "press down" when you click them */
+.board:not(.board--locked) .square:not(:disabled):active {
+  transform: scale(0.92);
+}
+
+@keyframes pop-in {
+  from {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes float-x {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-4px) rotate(-8deg);
+  }
+  75% {
+    transform: translateY(2px) rotate(8deg);
+  }
+}
+
+@keyframes float-o {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-5px) scale(1.08);
+  }
+}
+
+@keyframes win-bounce {
+  from {
+    transform: translateY(2px) scale(1);
+  }
+  to {
+    transform: translateY(-8px) scale(1.25);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-8px) rotate(-1deg);
+  }
+  40% {
+    transform: translateX(8px) rotate(1deg);
+  }
+  60% {
+    transform: translateX(-5px);
+  }
+  80% {
+    transform: translateX(5px);
+  }
+}
+
+/* neon sign flicker: stays on, with a couple of quick blinks */
+@keyframes neon-flicker {
+  0%,
+  89%,
+  91%,
+  93%,
+  100% {
+    opacity: 1;
+  }
+  90%,
+  92% {
+    opacity: 0.45;
+  }
 }
 
 /* --- mode select --- */
@@ -364,7 +500,11 @@
 @media (prefers-reduced-motion: reduce) {
   .status--winner,
   .status--thinking,
-  .square--winning {
+  .square--winning,
+  .mark,
+  .square--winning .mark,
+  .board--won,
+  .app__header h1 {
     animation: none;
   }
 }
