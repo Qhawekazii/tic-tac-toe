@@ -3,7 +3,7 @@ import Board from "./components/Board";
 import StatusBar from "./components/StatusBar";
 import Scoreboard from "./components/Scoreboard";
 import MoveHistory from "./components/MoveHistory";
-import { gameReducer, initialGameState, calculateWinner } from "./gameReducer";
+import { gameReducer, initialGameState, getGameStatus } from "./gameReducer";
 import "./App.css";
 
 export default function App() {
@@ -11,9 +11,7 @@ export default function App() {
   const { history, currentMove, scores } = state;
 
   const currentSquares = history[currentMove];
-  const { winner, line: winningLine } = calculateWinner(currentSquares);
-  const isDraw = !winner && currentSquares.every(Boolean);
-  const gameOver = !!winner || isDraw;
+  const { winner, winningLine, isDraw, isGameOver } = getGameStatus(currentSquares);
   const currentPlayer = currentMove % 2 === 0 ? "X" : "O";
 
   return (
@@ -30,7 +28,7 @@ export default function App() {
       <Board
         squares={currentSquares}
         winningLine={winningLine}
-        gameOver={gameOver}
+        gameOver={isGameOver}
         onSquareClick={(i) => dispatch({ type: "PLAY", squareIndex: i })}
       />
 

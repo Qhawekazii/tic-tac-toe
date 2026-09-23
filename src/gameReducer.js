@@ -20,6 +20,15 @@ export function calculateWinner(squares) {
   return { winner: null, line: null };
 }
 
+// One place that answers "what's going on with this board?"
+// Both the reducer and App.jsx use this, so the rules are only written once.
+export function getGameStatus(squares) {
+  const { winner, line } = calculateWinner(squares);
+  const isDraw = !winner && squares.every(Boolean);
+  const isGameOver = winner !== null || isDraw;
+  return { winner, winningLine: line, isDraw, isGameOver };
+}
+
 const emptyBoard = Array(9).fill(null);
 
 export const initialGameState = {
@@ -33,11 +42,10 @@ export function gameReducer(state, action) {
   switch (action.type) {
     case "PLAY": {
       const currentSquares = state.history[state.currentMove];
-      const { winner } = calculateWinner(currentSquares);
-      const isDraw = !winner && currentSquares.every(Boolean);
+      const { isGameOver } = getGameStatus(currentSquares);
 
       // ignore clicks once the game is decided, or on a square that's taken
-      if (winner || isDraw || currentSquares[action.squareIndex]) {
+      if (isGameOver || currentSquares[action.squareIndex]) {
         return state;
       }
 
